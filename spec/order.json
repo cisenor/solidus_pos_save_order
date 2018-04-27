@@ -1,0 +1,87 @@
+{
+  "from_hanami":{
+    "version": 1,
+    "clerkId": 123,
+    "store": {
+      "key": "123123123132",
+      "id": 2,
+      "name": "TestStore1",
+      "currency": "CAD"
+    },
+    "number": "R12314",
+    "total": 350,
+    "initializedTime": "Tue Mar 24 2015 17:00:00 GMT-0700 (PDT)",
+    "associatedCustomer": "A@B.com",
+    "lineItems": [
+      {
+        "variant_id": 1,
+        "quantity": 5
+      },
+      {
+        "variant_id": 3,
+        "quantity": 5
+      }
+    ],
+    "gift": false,
+    "payments": [
+      {
+        "transactionType": "credit-card",
+        "amount": 350,
+        "clerkId": 1123
+      }
+    ],
+    "promotions": [
+      {
+        "type": "override",
+        "id": "1"
+      }
+    ],
+    "owing": 0,
+    "taxes": [
+      {
+        "label": "GST",
+        "rate": 5
+      }
+    ]
+  },
+  "standard":  { 
+    "comment": "Standard Order",
+    "version": 1,
+    "clerkId": 123,
+    "number": "R12314",
+    "total": 350,
+    "initializedTime": "Tue Mar 24 2015 17:00:00 GMT-0700 (PDT)",
+    "associatedCustomer": "A@B.com",
+    "lineItems": [
+      {
+        "variant_id": 1,
+        "quantity": 5
+      },
+      {
+        "variant_id": 3,
+        "quantity": 5
+      }
+    ],
+    "gift": false,
+    "payments": [
+      {
+        "transactionType": "credit-card",
+        "amount": 350,
+        "clerkId": 1123
+      }
+    ],
+    "promotions": [
+      {
+        "type": "override",
+        "id": "1"
+      }
+    ],
+    "owing": 0,
+    "taxes": [
+      {
+        "label": "GST",
+        "rate": 5
+      }
+    ]
+  }
+}

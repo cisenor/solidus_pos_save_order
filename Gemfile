@@ -7,5 +7,7 @@ gem 'rubocop'
 gem 'rspec-core'
 gem 'rubocop-rspec'
 gem 'rspec-rails'
+gem 'factory_bot'
 gem 'rake', '11.3.0'
+gem 'rspec-json_expectations'
 gemspec
