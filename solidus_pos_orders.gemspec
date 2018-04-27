@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.email     = 'craig@stembolt.com'
 
   s.files = Dir["{app,config,db,lib}/**/*", 'LICENSE', 'Rakefile', 'README.md']
-  s.test_files = Dir['test/**/*']
+  s.test_files = Dir['spec/**/*']
 
   s.add_dependency 'solidus_core', '~> 2.0'
 

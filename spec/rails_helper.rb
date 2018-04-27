@@ -7,6 +7,13 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
+require 'spree/testing_support/authorization_helpers'
+require 'spree/testing_support/capybara_ext'
+require 'spree/testing_support/controller_requests'
+require 'spree/testing_support/factories'
+require 'spree/testing_support/url_helpers'
+require "rspec/json_expectations"
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -18,7 +25,7 @@ require 'rspec/rails'
 # The following line is provided for convenience purposes. It has the downside
 # of increasing the boot-up time by auto-requiring all files in the support
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
-# require only the support files necessary.
+# require only the support files necessary. 
 #
 # Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
@@ -54,4 +61,13 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+end
+
+def import_json(filename, object_name = nil)
+  filename += '.json' unless filename.ends_with? '.json'
+  path = Pathname.new(File.expand_path(filename, __FILE__))
+  raise IOError, "Can't import JSON file from #{path}" unless path.exist?
+  json = JSON.parse(path.read, symbolize_names: true)
+  return json if object_name.nil?
+  json.fetch(object_name)
 end
