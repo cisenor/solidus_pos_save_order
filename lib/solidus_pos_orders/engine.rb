@@ -3,6 +3,7 @@ module SolidusPosOrders
     require 'spree/core'
     isolate_namespace Spree
     engine_name 'solidus_pos_orders'
+    config.autoload_paths += %W(#{config.root}/lib)
 
     # use rspec for tests
     config.generators do |g|
@@ -16,5 +17,9 @@ module SolidusPosOrders
     end
 
     config.to_prepare(&method(:activate).to_proc)
+    initializer "Add POSPayment method", after: "spree.register.payment_methods" do |app|
+      app.config.spree.payment_methods << Spree::PaymentMethod::POSPayment
+      Spree::PaymentMethod::POSPayment.create({ name: 'POS', description: 'The payment method attributed to all POS transactions' })
+    end
   end
 end
