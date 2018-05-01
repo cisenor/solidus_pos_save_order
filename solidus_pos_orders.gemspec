@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'factory_girl'
   s.add_development_dependency 'poltergeist'
   s.add_development_dependency 'rspec-rails'
-  s.add_development_dependency 'rubocop', '0.37.2'
+  s.add_development_dependency 'rubocop', '~> 0.49.0'
   s.add_development_dependency 'rubocop-rspec', '1.4.0'
   s.add_development_dependency 'sass-rails'
   s.add_development_dependency 'simplecov'
