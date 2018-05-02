@@ -1,5 +1,5 @@
 {
-  "from_hanami":{
+  "from_hanami": {
     "version": 1,
     "clerkId": 123,
     "store": {
@@ -9,11 +9,10 @@
       "currency": "CAD"
     },
     "number": "R12314",
-    "total": 350,
+    "total": 199.90,
     "initializedTime": "Tue Mar 24 2015 17:00:00 GMT-0700 (PDT)",
     "associatedCustomer": "A@B.com",
-    "lineItems": [
-      {
+    "lineItems": [{
         "variant_id": 1,
         "quantity": 5
       },
@@ -23,37 +22,30 @@
       }
     ],
     "gift": false,
-    "payments": [
-      {
-        "transactionType": "credit-card",
-        "amount": 350,
-        "clerkId": 1123
-      }
-    ],
-    "promotions": [
-      {
-        "type": "override",
-        "id": "1"
-      }
-    ],
+    "payments": [{
+      "transactionType": "credit-card",
+      "amount": 199.90,
+      "clerkId": 1123
+    }],
+    "promotions": [{
+      "type": "override",
+      "id": "1"
+    }],
     "owing": 0,
-    "taxes": [
-      {
-        "label": "GST",
-        "rate": 5
-      }
-    ]
+    "taxes": [{
+      "label": "GST",
+      "rate": 5
+    }]
   },
-  "standard":  { 
+  "standard": {
     "comment": "Standard Order",
     "version": 1,
     "clerkId": 123,
     "number": "R12314",
-    "total": 350,
+    "total": 199.90,
     "initializedTime": "Tue Mar 24 2015 17:00:00 GMT-0700 (PDT)",
     "associatedCustomer": "A@B.com",
-    "lineItems": [
-      {
+    "lineItems": [{
         "variant_id": 1,
         "quantity": 5
       },
@@ -63,25 +55,19 @@
       }
     ],
     "gift": false,
-    "payments": [
-      {
-        "transactionType": "credit-card",
-        "amount": 350,
-        "clerkId": 1123
-      }
-    ],
-    "promotions": [
-      {
-        "type": "override",
-        "id": "1"
-      }
-    ],
+    "payments": [{
+      "transactionType": "credit-card",
+      "amount": 350,
+      "clerkId": 1123
+    }],
+    "promotions": [{
+      "type": "override",
+      "id": "1"
+    }],
     "owing": 0,
-    "taxes": [
-      {
-        "label": "GST",
-        "rate": 5
-      }
-    ]
+    "taxes": [{
+      "label": "GST",
+      "rate": 5
+    }]
   }
 }
