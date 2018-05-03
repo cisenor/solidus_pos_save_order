@@ -66,8 +66,14 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
     it 'the final email matches the associated customer' do
       expect(saved_order.email.downcase).to eq params.fetch(:associatedCustomer).downcase
     end
-    it 'the final currency matches the provided currency' do
-      expect(saved_order.currency).to eq params.dig(:store, :currency)
+    it 'only works on orders using USD currency' do
+      bad_params = params
+      bad_params[:store][:currency] = 'CAN'
+      interactor = described_class.new(store_repo, address_repo, user_repo)
+      expect{ interactor.create(user, bad_params) }.to raise_error(ArgumentError, 'Currency must be in USD')
+      bad_params[:store][:currency] = 'USD'
+      interactor = described_class.new(store_repo, address_repo, user_repo)
+      expect{ interactor.create(user, bad_params) }.to_not raise_error(ArgumentError, 'Currency must be in USD')
     end
     it 'the final store ID matches the provided store' do
       expect(saved_order.store_id).to eq params.fetch(:store_id)

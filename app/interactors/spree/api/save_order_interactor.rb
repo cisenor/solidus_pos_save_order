@@ -1,13 +1,22 @@
 module Spree
   class Api::SaveOrderInteractor
-    def initialize(store_repo = Spree::Store, address_repo = Spree::Address, user_repo = Spree::User)
+    def initialize(
+        store_repo = Spree::Store,
+        address_repo = Spree::Address,
+        user_repo = Spree::User
+        )
       @stores = store_repo
       @addresses = address_repo
       @users = user_repo
     end
 
     def create(user, params)
-      order = Spree::Order.create(user: user, store: @stores.find(params.fetch(:store_id)), currency: params.dig(:store, :currency))
+      currency = params.dig(:store, :currency)
+      store_id = params.dig(:store, :id)
+      unless currency.casecmp('usd') == 0
+        raise(ArgumentError, 'Currency must be in USD')
+      end
+      order = Spree::Order.create(user: user, store: @stores.find(store_id))
       sync_to_provided_params(order, params)
     end
 
@@ -18,7 +27,7 @@ module Spree
       order = create_line_items(order, params.fetch(:lineItems))
       order.currency = params.dig(:store, :currency)
       order = create_payments(order, params.fetch(:payments))
-      order = attach_address(order, params.fetch(:store_id))
+      order = attach_address(order, params.dig(:store, :id))
       order.number = params.fetch(:number)
       order = associate_user(order, params.fetch(:associatedCustomer))
       finish(order)
