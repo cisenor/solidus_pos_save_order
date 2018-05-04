@@ -7,8 +7,14 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
   let(:store_repo) { instance_double('stores', find: store) }
   let(:variants) { [FactoryBot.create(:variant), FactoryBot.create(:variant)] }
   let(:address_repo){ instance_double('addresses', find: address) }
+  let(:user_repo) do
+    instance_double(
+      'users',
+      find: FactoryBot.create(:user, email: params.fetch(:associatedCustomer))
+    )
+  end
   let(:user) { FactoryBot.create(:user, :with_api_key) }
-  let(:order_params) { import_json('../order', :standard) }
+  let(:order_params) { import_json('../order', :from_hanami) }
   let(:params) do
     v1, v2 = variants
     parameters = order_params
@@ -18,11 +24,9 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
     parameters
   end
 
-  before { p described_class }
-
   let(:payments) do
     pay = params.fetch(:payments)
-    pay.inject(0) { |sum, p| sum + p.fetch(:amount).to_i }
+    pay.inject(0) { |sum, p| sum + p.fetch(:amount).to_d }
   end
 
   let(:item_count) do
@@ -36,7 +40,7 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
 
   context 'with valid parameters' do
     let(:saved_order) do
-      interactor = described_class.new(store_repo, address_repo)
+      interactor = described_class.new(store_repo, address_repo, user_repo)
       interactor.create(user, params)
     end
     it 'does something' do
@@ -55,26 +59,30 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
       pending
     end
     it 'the final order number matches the provided order number' do
-      expect(saved_order.number).to eq params[:number]
+      expect(saved_order.number).to eq params.fetch(:number)
     end
-    it 'the final state is "completed"' do
+    it 'the final state is "complete"' do
       expect(saved_order.state).to eq "complete"
     end
     it 'the final email matches the associated customer' do
-      expect(saved_order.email).to eq params[:associatedCustomer]
+      expect(saved_order.email.downcase).to eq params.fetch(:associatedCustomer).downcase
     end
     it 'the final currency matches the provided currency' do
-      pending
+      expect(saved_order.currency).to eq params.dig(:store, :currency)
     end
     it 'the final store ID matches the provided store' do
-      pending
+      expect(saved_order.store_id).to eq params.fetch(:store_id)
     end
     context 'the database' do
       it 'contains a new record for each of the line items' do
-        pending
+        order = saved_order
+        line_items = Spree::LineItem.where(order_id: order.id)
+        expect(line_items.size).to eq params.fetch(:lineItems).size
       end
       it 'contains a new record for each of the payments' do
-        pending
+        order = saved_order
+        payments = Spree::Payment.where(order_id: order.id)
+        expect(payments.size).to eq params.fetch(:payments).size
       end
     end
   end
