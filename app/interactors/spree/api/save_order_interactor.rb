@@ -1,16 +1,43 @@
 module Spree
   class Api::SaveOrderInteractor
-    def initialize(store_repo = Spree::Store, address_repo = Spree::Address)
+    def initialize(store_repo = Spree::Store, address_repo = Spree::Address, user_repo = Spree::User)
       @stores = store_repo
       @addresses = address_repo
+      @users = user_repo
     end
 
     def create(user, params)
-      order = Spree::Order.create(user: user, store: @stores.find(params.fetch(:store_id)))
+      order = Spree::Order.create(user: user, store: @stores.find(params.fetch(:store_id)), currency: params.dig(:store, :currency))
       sync_to_provided_params(order, params)
     end
 
     private
+
+    def sync_to_provided_params(order, params)
+      # TODO: I don't like this process
+      order = create_line_items(order, params.fetch(:lineItems))
+      order.currency = params.dig(:store, :currency)
+      order = create_payments(order, params.fetch(:payments))
+      order = attach_address(order, params.fetch(:store_id))
+      order.number = params.fetch(:number)
+      order = associate_user(order, params.fetch(:associatedCustomer))
+      finish(order)
+    end
+
+    def attach_address(order, store_id)
+      address_id = @stores.find(store_id).address_id
+      address = @addresses.find(address_id)
+      order.ship_address = address
+      order.bill_address = address
+      order
+    end
+
+    def associate_user(order, user_email)
+      user = @users.find(:first, conditions: ["email = ?", user_email])
+      order.user = user
+      order.email = user.email
+      order
+    end
 
     def create_payments(order, payments)
       payment_method = Spree::PaymentMethod::POSPayment.first
@@ -24,9 +51,10 @@ module Spree
         })
         pm = pay.build
         pm.state = 'completed'
+        pm.save!
         pm
       end
-      order.reload.recalculate
+      order
     end
 
     def create_line_items(order, line_items)
@@ -34,21 +62,11 @@ module Spree
         variant = Spree::Variant.find(li.fetch(:variant_id))
         order.contents.add(variant, li.fetch(:quantity, 0))
       end
-      # order.reload.recalculate
+      order
     end
 
-    def sync_to_provided_params(order, params)
-      # cart
-      create_line_items(order, params.fetch(:lineItems))
-      # address
-      # delivery
-      # payment
-      create_payments(order, params.fetch(:payments))
-      # confirm
-      # complete
+    def finish(order)
       order.state = 'complete'
-      order.shipment_state = 'shipped'
-      order.payment_state = 'complete'
       order.finalize!
       order.save!
       order
