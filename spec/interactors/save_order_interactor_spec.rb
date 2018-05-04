@@ -43,9 +43,6 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
       interactor = described_class.new(store_repo, address_repo, user_repo)
       interactor.create(user, params)
     end
-    it 'does something' do
-      expect(1).to eq 2
-    end
     it 'the final total is equal to the provided total' do
       expect(saved_order.display_total.to_d).to eq params.fetch(:total)
     end
@@ -56,7 +53,9 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
       expect(saved_order.payment_total).to eq payments
     end
     it 'the shipping address and billing address are equal to the supplied store' do
-      pending
+      expect(saved_order.ship_address.id).to eq address.id
+      expect(saved_order.bill_address.id).to eq address.id
+      expect(Spree::Order.last.ship_address.id).to eq address.id
     end
     it 'the final order number matches the provided order number' do
       expect(saved_order.number).to eq params.fetch(:number)
