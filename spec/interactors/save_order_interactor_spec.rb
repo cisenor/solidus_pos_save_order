@@ -20,7 +20,7 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
     parameters = order_params
     parameters[:lineItems][0][:variant_id] = v1.id
     parameters[:lineItems][1][:variant_id] = v2.id
-    parameters[:store_id] = store.id
+    parameters[:store][:id] = store.id
     parameters
   end
 
@@ -55,7 +55,6 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
     it 'the shipping address and billing address are equal to the supplied store' do
       expect(saved_order.ship_address.id).to eq address.id
       expect(saved_order.bill_address.id).to eq address.id
-      expect(Spree::Order.last.ship_address.id).to eq address.id
     end
     it 'the final order number matches the provided order number' do
       expect(saved_order.number).to eq params.fetch(:number)
@@ -76,7 +75,7 @@ RSpec.describe Spree::Api::SaveOrderInteractor, type: :model do
       expect{ interactor.create(user, bad_params) }.to_not raise_error(ArgumentError, 'Currency must be in USD')
     end
     it 'the final store ID matches the provided store' do
-      expect(saved_order.store_id).to eq params.fetch(:store_id)
+      expect(saved_order.store_id).to eq params.dig(:store, :id)
     end
     context 'the database' do
       it 'contains a new record for each of the line items' do
